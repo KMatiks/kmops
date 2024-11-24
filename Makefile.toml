@@ -2,6 +2,11 @@
 command = "cargo"
 args = ["run"]
 
+[tasks.build_dependencies]
+command = "rustup"
+args = ["component", "add", "rust-src"]
+
 [tasks.build]
 command = "cargo"
-args = ["build", "--target", "thumbv7em-none-eabihf"]
+args = ["build"]
+dependencies = ["build_dependencies"]
