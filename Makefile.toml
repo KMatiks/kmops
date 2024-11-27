@@ -10,7 +10,11 @@ args = ["component", "add", "rust-src"]
 command = "cargo"
 args = ["install", "bootimage"]
 
+[tasks.install_llvm_tools_preview]
+command = "cargo"
+args = ["component", "add", "llvm-tools-preview"]
+
 [tasks.build]
 command = "cargo"
 args = ["build"]
-dependencies = ["install_rust_src", "install_bootimage"]
+dependencies = ["install_rust_src", "install_llvm_tools_preview", "install_bootimage"]
