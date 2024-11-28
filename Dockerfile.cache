@@ -1,0 +1,7 @@
+FROM rust:alpine3.20
+
+WORKDIR /build
+COPY . /build
+RUN apk add musl-dev bash
+RUN cargo install --force cargo-make
+RUN cargo make install_build_dependencies
