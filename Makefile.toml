@@ -6,15 +6,40 @@ args = ["run"]
 command = "rustup"
 args = ["component", "add", "rust-src"]
 
+[tasks.install_llvm_tools_preview]
+command = "rustup"
+args = ["component", "add", "llvm-tools-preview"]
+
 [tasks.install_bootimage]
 command = "cargo"
 args = ["install", "bootimage"]
+dependencies = ["install_llvm_tools_preview"]
 
-[tasks.install_llvm_tools_preview]
-command = "cargo"
-args = ["component", "add", "llvm-tools-preview"]
+[tasks.install_build_dependencies]
+dependencies = ["install_rust_src", "install_bootimage"]
 
 [tasks.build]
 command = "cargo"
 args = ["build"]
-dependencies = ["install_rust_src", "install_llvm_tools_preview", "install_bootimage"]
+dependencies = ["install_rust_src", "install_bootimage"]
+
+[tasks.bootimage]
+command = "cargo"
+args = ["bootimage"]
+dependencies = ["install_rust_src", "install_bootimage"]
+
+[tasks.build_docker_cache_image]
+command = "docker"
+args = ["build", "-t", "kmops-cache:latest", "-f", "Dockerfile.cache", "."]
+
+[tasks.build_docker]
+script = "docker build --output type=local,dest=out -t kmops:latest -f Dockerfile ."
+dependencies = ["remove_out_dir", "make_out_dir"]
+
+[tasks.make_out_dir]
+script_runner = "@shell"
+script = "mkdir -p out"
+
+[tasks.remove_out_dir]
+script_runner = "@shell"
+script = "rm -rf out"
