@@ -1,33 +1,14 @@
-[tasks.run]
-command = "cargo"
-args = ["run"]
-
-[tasks.install_rust_src]
-command = "rustup"
-args = ["component", "add", "rust-src"]
-
-[tasks.install_llvm_tools_preview]
-command = "rustup"
-args = ["component", "add", "llvm-tools-preview"]
-
+#---------- Native tasks ----------
 [tasks.install_bootimage]
 command = "cargo"
 args = ["install", "bootimage"]
-dependencies = ["install_llvm_tools_preview"]
-
-[tasks.install_build_dependencies]
-dependencies = ["install_rust_src", "install_bootimage"]
 
 [tasks.build]
 command = "cargo"
-args = ["build"]
-dependencies = ["install_rust_src", "install_bootimage"]
-
-[tasks.bootimage]
-command = "cargo"
 args = ["bootimage"]
-dependencies = ["install_rust_src", "install_bootimage"]
+dependencies = ["install_bootimage"]
 
+#---------- Docker tasks ----------
 [tasks.build_docker_cache_image]
 command = "docker"
 args = ["build", "-t", "kmops-cache:latest", "-f", "Dockerfile.cache", "."]
