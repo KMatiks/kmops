@@ -14,7 +14,7 @@ command = "docker"
 args = ["build", "-t", "kmops-cache:latest", "-f", "Dockerfile.cache", "."]
 
 [tasks.build_docker]
-script = "docker build --output type=local,dest=out -t kmops:latest -f Dockerfile ."
+script = "docker build --no-cache --output type=local,dest=out -t kmops:latest -f Dockerfile ."
 dependencies = ["remove_out_dir", "make_out_dir"]
 
 [tasks.make_out_dir]
