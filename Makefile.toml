@@ -10,8 +10,7 @@ dependencies = ["install_bootimage"]
 
 #---------- Docker tasks ----------
 [tasks.build_docker_cache_image]
-command = "docker"
-args = ["build", "-t", "kmops-cache:latest", "-f", "Dockerfile.cache", "."]
+script = "docker build --platform linux/amd64 -t kmops-cache:latest -f Dockerfile.cache ."
 
 [tasks.build_docker]
 script = "docker build --no-cache --output type=local,dest=out -t kmops:latest -f Dockerfile ."
