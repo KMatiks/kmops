@@ -2,11 +2,12 @@
 #![no_main]
 
 #![feature(custom_test_frameworks)]
-#![test_runner(crate::test_runner)]
+#![test_runner(kmops::test_runner)]
 
 #![reexport_test_harness_main = "test_main"]
 
 use core::panic::PanicInfo;
+use kmops::println;
 
 mod vga_buffer;
 mod serial;
@@ -55,10 +56,7 @@ fn panic(info: &PanicInfo) -> ! {
 #[cfg(test)]
 #[panic_handler]
 fn panic(info: &PanicInfo) -> ! {
-    serial_println!("[failed]\n");
-    serial_println!("Error: {}\n", info);
-    exit_qemu(QemuExitCode::Failed);
-    loop {}
+    kmops::test_panic_handler(info);
 }
 
 #[no_mangle]
