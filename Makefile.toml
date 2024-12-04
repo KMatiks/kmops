@@ -1,12 +1,19 @@
+[tasks.run_qemu]
+command = "qemu-system-x86_64"
+args = ["-drive", "format=raw,file=out/bootimage-kmops.bin"]
+
 #---------- Native tasks ----------
 [tasks.install_bootimage]
 command = "cargo"
 args = ["install", "bootimage"]
 
+[tasks.install_build_dependencies]
+dependencies = ["install_bootimage"]
+
 [tasks.build]
 command = "cargo"
 args = ["bootimage"]
-dependencies = ["install_bootimage"]
+dependencies = ["install_build_dependencies"]
 
 #---------- Docker tasks ----------
 [tasks.build_docker_cache_image]
@@ -14,12 +21,3 @@ script = "docker build --platform linux/amd64 -t kmops-cache:latest -f Dockerfil
 
 [tasks.build_docker]
 script = "docker build --no-cache --output type=local,dest=out -t kmops:latest -f Dockerfile ."
-dependencies = ["remove_out_dir", "make_out_dir"]
-
-[tasks.make_out_dir]
-script_runner = "@shell"
-script = "mkdir -p out"
-
-[tasks.remove_out_dir]
-script_runner = "@shell"
-script = "rm -rf out"
