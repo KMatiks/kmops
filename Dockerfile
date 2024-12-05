@@ -6,5 +6,7 @@ COPY . /build
 RUN cargo make build
 RUN cargo test
 
-FROM scratch AS export
+FROM kmops-cache:latest AS export
 COPY --from=0 /build/target/x86_64-os/debug/bootimage-kmops.bin /
+
+CMD ["qemu-system-x86_64", "-drive", "format=raw,file=out/bootimage-kmops.bin"]
