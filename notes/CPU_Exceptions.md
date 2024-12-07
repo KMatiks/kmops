@@ -1,0 +1,71 @@
+# General
+- IDT
+- Maps interrupts to handler functions
+- 3 levels of faulting
+- 3rd level is unchangeable, typically leads to cpu reset
+- Interrupt calling convention
+# Calling Conventions
+## C calling convention
+- System V ABI
+- Defines the calling convention of function calls in C
+- https://refspecs.linuxbase.org/elf/x86_64-abi-0.99.pdf
+- x86_64 Calling convention
+	- first 6 integer arguments passed in registers `rdi`, `rsi`, `rdx`, `rcx`, `r8`, `r9`
+	- additional arguments passed on the stack
+	- results returned in `rax` and `rdx`
+- Registers are divided into **preserved** and **scratch** registers
+	- **preserved** registers MUST maintain their state before and after a function call
+		- Known as "callee-saved"
+		- A function can use these registers iff it restores them properly afterwards
+		- Typically pushes the preserved registers it uses to the stack in the function's beggining.
+	- **scratch** registers can be overwritten without restriction
+		- Known as "caller saved" because the caller itself must preserve these values (functions make no state guarantees)
+## Interrupt Calling Convention
+- Can occur anywhere, so the exception handlers need to be sure to save whatever registers were in use at the time of the exception.
+- Solution?
+	- If we don't know what to backup (i.e. not knowing what registers are currently needed), backup "**everything**"
+	- This is called the **`x86-interrupt`** calling convention
+		- *Technically*, not all registers saved. The compiler checks what registers are actually USED in the function and saves those onto the stack at the function prologue.
+	- USED FOR EXCEPTION HANDLERS
+	- Flow:
+		- In some random function
+		- Some instruction triggers a CPU exception
+		- We enter the handler function
+		- The handler functions pushes the values of the registers it uses onto the stack
+		- Handler does its thing
+		- Handler function restores those register values by popping them from the stack
+	- What's the difference between this and the C calling convention?
+		- x86_64 calling convention only preserves **preserved** registers used in the function.
+		- The x86-interrupt calling convention preserves ANY register used in the function. 
+
+# Interrupt Stack Frame
+- Normal function call (`call` instr)
+	- CPU pushes ret addr before jumping to target function
+	- On function return, `ret` instr is called and this return address is popped and jumped to
+- Exception and interrupt handlers are trickier
+	- Cannot just push the ret addr to the stack because the interrupt handlers run in a different context (stack pointer, CPU flags, etc.).
+	- This meaning `ret`'ing to this addr would take us somewhere undesired
+	- Process that avoids these pitfalls
+		- Interrupt stack frame:
+		  ![[Pasted image 20241206224001.png]]
+			- Stack grows downwards
+		- Save the old stack pointer and stack segment (ss) into buffer
+		- Align stack pointer
+			- Some CPU instructions require 16-byte alignment
+			- The CPU will automatically align to the nearest 16-byte boundary,
+		- Switch stacks
+			- Occurs when the CPU privilege level changes
+				- E.g. a CPU exception occurs in a user-mode program
+			- Can configure stack switches for specific interrupts using the **Interrupt Stack Table**
+		- Push the old SP and SS values onto the stack
+		- Push and update the RFLAGS register
+			- Contains various control and status bits.
+			- On interrupt entry, the CPU changes some bits and pushes the old value.
+		- Push the instruction pointer and code segment (cs)
+			- Comparable to return address push of a normal function call
+		- Push error code (for some exceptions)
+			- E.g. page faults
+			- CPU pushes error code
+		- Invoke interrupt handler
+			- CPU reads address and segment descriptor of interrupt handler from IDT
+			- Invokes handler by loading values into the instruction pointer and code segment registers
