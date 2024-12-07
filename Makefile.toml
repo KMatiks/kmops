@@ -25,12 +25,14 @@ dependencies = ["install_build_dependencies"]
 script = "docker build --platform linux/amd64 -t kmops-cache:latest -f Dockerfile.cache ."
 
 [tasks.docker_test]
+script_runner = "@shell"
 script = '''
 docker run --rm -it kmops-cache:latest cargo test
 '''
 dependencies = ["build_docker_cache_image"]
 
 [tasks.docker_build]
+script_runner = "@shell"
 script = '''
 rm -rf out
 mkdir -p out
