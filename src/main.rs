@@ -15,6 +15,12 @@ pub extern "C" fn _start() -> ! {
     println!("2");
     println!("3");
 
+    kmops::init();
+
+    x86_64::instructions::interrupts::int3();
+
+    println!("It didn't crash!!!");
+
     #[cfg(test)]
     test_main();
 
