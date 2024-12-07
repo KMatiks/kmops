@@ -15,9 +15,27 @@ command = "cargo"
 args = ["bootimage"]
 dependencies = ["install_build_dependencies"]
 
+[tasks.test]
+command = "cargo"
+args = ["test"]
+dependencies = ["install_build_dependencies"]
+
 #---------- Docker tasks ----------
 [tasks.build_docker_cache_image]
 script = "docker build --platform linux/amd64 -t kmops-cache:latest -f Dockerfile.cache ."
 
-[tasks.build_docker]
-script = "docker build --no-cache --output type=local,dest=out -t kmops:latest -f Dockerfile ."
+[tasks.docker_test]
+script = '''
+docker run --rm -it kmops-cache:latest cargo test
+'''
+dependencies = ["build_docker_cache_image"]
+
+[tasks.docker_build]
+script = '''
+rm -rf out
+mkdir -p out
+docker create --name dummy kmops-cache:latest
+docker cp dummy:/build/target/x86_64-os/debug/bootimage-kmops.bin "$PWD/out"
+docker rm -f dummy
+'''
+dependencies = ["build_docker_cache_image"]
