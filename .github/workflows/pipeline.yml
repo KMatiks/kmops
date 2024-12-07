@@ -7,15 +7,17 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: actions-rust-lang/setup-rust-toolchain@v1
-
-      - name: Cache Dependencies
-        uses: actions/cache@v2
-        with:
-          path: |
-            ~/.cargo/registry
-            ~/.cargo/git
-            target
-          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+      - name: Install QEMU Packages
+        run: |
+          # Update package lists
+          sudo apt-get update
+          
+          # Install specific QEMU packages
+          sudo apt-get install -y \
+          qemu \
+          qemu-system-x86 \
+          qemu-utils \
+          qemu-user
 
       - run: cargo install --force cargo-make
       - run: cargo make test
