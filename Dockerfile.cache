@@ -3,6 +3,6 @@ FROM rust:alpine3.20
 WORKDIR /build
 COPY . /build
 RUN apk add musl-dev bash
-RUN apk add qemu qemu-img qemu-system-x86_64 qemu-ui-gtk
+RUN apk add qemu qemu-img qemu-system-x86_64
 RUN cargo install --force cargo-make
 RUN cargo make build
