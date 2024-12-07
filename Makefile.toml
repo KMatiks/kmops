@@ -41,3 +41,12 @@ docker cp dummy:/build/target/x86_64-os/debug/bootimage-kmops.bin "$PWD/out"
 docker rm -f dummy
 '''
 dependencies = ["build_docker_cache_image"]
+
+[tasks.docker_run]
+script_runner = "@shell"
+script = '''
+docker run --rm --name kmops -p 5900:5900 -it kmops-cache:latest cargo run
+ip=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' kmops)
+echo "The IP of the container is $ip"
+'''
+dependencies = ["build_docker_cache_image"]
