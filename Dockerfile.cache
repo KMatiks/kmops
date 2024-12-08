@@ -5,4 +5,4 @@ COPY . /build
 RUN apk add musl-dev bash
 RUN apk add qemu qemu-img qemu-system-x86_64
 RUN cargo install --force cargo-make
-RUN cargo make build
+RUN cargo check
