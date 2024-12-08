@@ -1,8 +1,46 @@
-FROM rust:alpine3.20
+FROM rust:alpine3.20 AS prereqs
+
+###########################################################
+# This stage should run once and will forever be cached
+###########################################################
 
 WORKDIR /build
-COPY . /build
+
 RUN apk add musl-dev bash
 RUN apk add qemu qemu-img qemu-system-x86_64
 RUN cargo install --force cargo-make
+RUN cargo install bootimage
+
+FROM prereqs AS build
+
+###########################################################
+# This stage only re-runs if any of the below files change
+###########################################################
+
+COPY Cargo.toml Cargo.lock rust-toolchain.toml Makefile.toml x86_64-os.json ./
+COPY .cargo/ ./.cargo/
+
+# Create a minimal dummy source file that compiles
+RUN mkdir -p src
+RUN echo -e "#![no_std]\n#![no_main]\nuse core::panic::PanicInfo;\nfn main() {}\n#[panic_handler]\nfn panic(info: &PanicInfo) -> ! {loop {}}" > src/main.rs
+
+# Remove [[test]] section to allow Cargo to proceed
+RUN sed -i '/\[\[test\]\]/,/^$/d' Cargo.toml
+
+# Download and compile dependencies
 RUN cargo check
+
+# Restore env
+COPY Cargo.toml ./
+RUN rm -rf src/
+
+FROM build AS final
+
+###########################################################
+# Copy over source and test files now that we've compiled
+###########################################################
+
+# Now copy over src and tests
+
+COPY src/ ./src/
+COPY tests/ ./tests/
