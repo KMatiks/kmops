@@ -27,7 +27,7 @@ script = "docker build --platform linux/amd64 -t kmops-cache:latest -f Dockerfil
 [tasks.docker_test]
 script_runner = "@shell"
 script = '''
-docker run --rm -it kmops-cache:latest cargo test
+docker run --rm --name kmops -it kmops-cache:latest cargo test
 '''
 dependencies = ["docker_build_cache_image"]
 
@@ -35,9 +35,7 @@ dependencies = ["docker_build_cache_image"]
 script_runner = "@shell"
 script = '''
 mkdir -p out
-docker create --name dummy kmops-cache:latest
-docker cp dummy:/build/target/x86_64-os/debug/bootimage-kmops.bin "$PWD/out"
-docker rm -f dummy
+docker run --rm --name kmops -v $PWD/out:/output -it kmops-cache:latest /bin/sh -c "cargo make build; mv /build/target/x86_64-os/debug/bootimage-kmops.bin /output"
 '''
 dependencies = ["docker_build_cache_image"]
 
