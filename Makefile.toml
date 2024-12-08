@@ -34,7 +34,6 @@ dependencies = ["docker_build_cache_image"]
 [tasks.docker_build]
 script_runner = "@shell"
 script = '''
-rm -rf out
 mkdir -p out
 docker create --name dummy kmops-cache:latest
 docker cp dummy:/build/target/x86_64-os/debug/bootimage-kmops.bin "$PWD/out"
