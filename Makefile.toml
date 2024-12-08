@@ -35,7 +35,9 @@ dependencies = ["docker_build_cache_image"]
 script_runner = "@shell"
 script = '''
 mkdir -p out
-docker run --rm --name kmops -v $PWD/out:/output -it kmops-cache:latest /bin/sh -c "cargo make build; mv /build/target/x86_64-os/debug/bootimage-kmops.bin /output"
+docker run --name kmops -it kmops-cache:latest /bin/sh -c "cargo make build"
+docker cp kmops:/build/target/x86_64-os/debug/bootimage-kmops.bin ./out/bootimage-kmops.bin
+docker rm kmops
 '''
 dependencies = ["docker_build_cache_image"]
 
