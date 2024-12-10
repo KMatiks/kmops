@@ -9,7 +9,7 @@
     - Builds and compiles the bootloader and kernel, producing a bootable disk image
 
 ### Docker
-After installing `cargo-make`, run the following commands to generate the kernel image in an `out` directory at the root of the repo.
+After installing `cargo-make`, run any of the following Docker tasks:
 1. `cargo make docker_build_cache_image`
     - Builds the cached image layer to avoid having to recompile dependencies each time.
     - All subsequent docker tasks depend upon this task!
