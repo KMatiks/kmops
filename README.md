@@ -1,4 +1,4 @@
-# KMOPS: An Operating System
+# KMOPS: A Basic Kernel
 
 ## Getting Started
 
