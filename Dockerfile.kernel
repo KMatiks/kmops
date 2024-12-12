@@ -1,0 +1,3 @@
+FROM kmops-cache:latest
+
+RUN cargo make build
