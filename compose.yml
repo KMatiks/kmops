@@ -1,6 +1,8 @@
 services:
   kernel:
-    image: "kmops-cache:latest"
+    build:
+      dockerfile: Dockerfile.kernel
+    platform: linux/amd64
     hostname: kernel
     container_name: kernel
     ports:
@@ -8,6 +10,7 @@ services:
     command: qemu-system-x86_64 -vnc 0.0.0.0:0 -drive format=raw,file=target/x86_64-os/debug/bootimage-kmops.bin
   novnc:
     hostname: novnc
+    platform: linux/amd64
     container_name: novnc
     build:
       dockerfile: Dockerfile.novnc
