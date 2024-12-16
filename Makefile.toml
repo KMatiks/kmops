@@ -31,6 +31,13 @@ docker run --rm --name kmops -it kmops-cache:latest cargo test
 '''
 dependencies = ["docker_build_cache_image"]
 
+[tasks.docker_test_specific]
+script_runner = "@shell"
+script = '''
+docker run --rm --name kmops -it kmops-cache:latest cargo test --test ${1}
+'''
+dependencies = ["docker_build_cache_image"]
+
 [tasks.docker_build]
 script_runner = "@shell"
 script = '''
