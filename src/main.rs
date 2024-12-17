@@ -11,13 +11,8 @@ use kmops::println;
 #[no_mangle]
 pub extern "C" fn _start() -> ! {
     println!("Hello World{}", "!");
-    println!("1");
-    println!("2");
-    println!("3");
 
     kmops::init();
-
-    x86_64::instructions::interrupts::int3();
 
     println!("It didn't crash!!!");
 
