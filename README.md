@@ -21,7 +21,7 @@ After installing `cargo-make`, run any of the following Docker tasks:
    - Builds the kernel and runs the specific test with name `<test>`.
 5. `cargo make docker_test_lib`
    - Builds the kernel and runs lib tests.
-7. `cargo make docker_run`
+6. `cargo make docker_run`
    - Runs the kernel image in QEMU, displaying it in a novnc window in your web browser of choice.
    - When you run this task, you'll see the URL to navigate to displayed in your terminal like so:
 ```bash
