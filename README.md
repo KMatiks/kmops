@@ -7,6 +7,7 @@
 ### Native
 1. `cargo make build`
     - Builds and compiles the bootloader and kernel, producing a bootable disk image
+    - Run this image using QEMU.
 
 ### Docker
 After installing `cargo-make`, run any of the following Docker tasks:
