@@ -20,8 +20,6 @@ pub enum QemuExitCode {
 }
 
 pub fn hlt_loop() -> ! {
-    use x86_64::instructions::hlt;
-
     loop {
         x86_64::instructions::hlt();
     }
