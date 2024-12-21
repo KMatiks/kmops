@@ -7,7 +7,6 @@ FROM rust:alpine3.20 AS prereqs
 WORKDIR /build
 
 RUN apk add musl-dev bash
-RUN apk add qemu qemu-img qemu-system-x86_64
 RUN cargo install --force cargo-make
 RUN cargo install bootimage
 
@@ -41,6 +40,5 @@ FROM build AS final
 ###########################################################
 
 # Now copy over src and tests
-
 COPY src/ ./src/
 COPY tests/ ./tests/

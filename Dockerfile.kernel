@@ -1,3 +1,4 @@
 FROM kmops-cache:latest
 
+RUN apk add qemu qemu-system-x86_64
 RUN cargo make build
