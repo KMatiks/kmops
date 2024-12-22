@@ -1,0 +1,30 @@
+resources:
+- name: kmops
+  type: git
+  source:
+    uri: https://github.com/KMatiks/kmops.git
+    branch: main
+
+jobs:
+  - name: build-kernel
+    plan:
+      - get: kmops
+        trigger: true
+      - task: build-kernel
+        config:
+          platform: linux
+          image_resource:
+            type: registry-image
+            source:
+              repository: rust
+              tag: alpine3.20 
+          inputs:
+              - name: kmops
+          run:
+            path: sh
+            args:
+            - -exc
+            - | 
+              cd kmops
+              apk add musl-dev bash qemu qemu-system-x86_64 just
+              just build
