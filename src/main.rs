@@ -8,6 +8,7 @@
 use core::panic::PanicInfo;
 use kmops::println;
 
+
 #[no_mangle]
 pub extern "C" fn _start() -> ! {
     println!("Hello World{}", "!");
@@ -15,6 +16,9 @@ pub extern "C" fn _start() -> ! {
     kmops::init();
 
     println!("It didn't crash!!!");
+
+    let ptr = 0xdeadbeaf as *mut u8;
+    unsafe { *ptr = 42; }
 
     #[cfg(test)]
     test_main();
