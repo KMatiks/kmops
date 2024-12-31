@@ -6,19 +6,29 @@
 #![reexport_test_harness_main = "test_main"]
 
 use core::panic::PanicInfo;
-use kmops::println;
+use kmops::{println, memory::active_level_4_table};
+use x86_64::VirtAddr;
+use bootloader::{BootInfo, entry_point};
 
+
+entry_point!(kernel_main);
 
 #[no_mangle]
-pub extern "C" fn _start() -> ! {
+fn kernel_main(boot_info: &'static BootInfo) -> ! {
     println!("Hello World{}", "!");
 
     kmops::init();
 
     println!("It didn't crash!!!");
 
-    let ptr = 0xdeadbeaf as *mut u8;
-    unsafe { *ptr = 42; }
+    let phys_mem_offset = VirtAddr::new(boot_info.physical_memory_offset);
+    let l4_table = unsafe { active_level_4_table(phys_mem_offset) };
+
+    for (i, entry) in l4_table.iter().enumerate() {
+        if !entry.is_unused() {
+            println!("L4 Entry {}: {:?}", i, entry);
+        }
+    }
 
     #[cfg(test)]
     test_main();
